@@ -1,3 +1,5 @@
+import type { Task } from "../task/task.interface";
+
 export interface GetProjectsResponse {
   success: boolean;
   message: string;
@@ -56,4 +58,6 @@ export interface GetProjectDetailsResponse {
   };
 }
 
-export interface ProjectDetails extends Project {}
+export interface ProjectDetails extends Project {
+  tasks: Task[];
+}

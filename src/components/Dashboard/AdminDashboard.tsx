@@ -3,8 +3,36 @@ import { AlertCircle, FolderKanban, ListTodo, Users } from "lucide-react";
 import StatItem from "./StatItem";
 import TaskFilters from "./TaskFilters";
 import TaskTable from "./TaskTable";
+import { useGetTasksQuery } from "../../features/task/task.api";
+import { useEffect, useState } from "react";
+import type { Task } from "../../features/task/task.interface";
+import { useSearchParams } from "react-router-dom";
 
 const AdminDashboard = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { data, isLoading } = useGetTasksQuery({
+    status: searchParams.get("status") || undefined,
+    priority: searchParams.get("priority") || undefined,
+    dueFrom: searchParams.get("dueFrom") || undefined,
+    dueTo: searchParams.get("dueTo") || undefined,
+  });
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  useEffect(() => {
+    if (data?.data?.tasks) {
+      setTasks(data.data.tasks);
+    }
+  }, [data]);
+
+  console.log(searchParams.get("status"));
+  if (isLoading) {
+    return (
+      <div className="py-10">
+        <p className="text-center text-base">Loading...</p>
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 px-8 min-h-screen py-10">
       <div>
@@ -32,10 +60,13 @@ const AdminDashboard = () => {
             <p className="mt-1 text-base text-slate-300">All workspace tasks</p>
           </div>
 
-          <TaskFilters />
+          <TaskFilters
+            searchParams={searchParams}
+            setSearchParams={setSearchParams}
+          />
         </div>
 
-        <TaskTable />
+        <TaskTable tasks={tasks} />
       </div>
     </div>
   );

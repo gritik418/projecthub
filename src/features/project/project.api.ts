@@ -28,6 +28,7 @@ const projectApi = baseApi.injectEndpoints({
         url: `/project/${projectId}`,
         method: "GET",
       }),
+      providesTags: ["Tasks"],
     }),
   }),
 });

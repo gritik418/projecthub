@@ -107,7 +107,7 @@ export default function ProjectDetails() {
           <ProjectInfo
             icon={CalendarDays}
             label="Created"
-            value="Sep 10, 2026"
+            value={new Date(project?.createdAt!).toDateString()}
           />
         </div>
       </div>
@@ -142,7 +142,7 @@ export default function ProjectDetails() {
           <TaskFilters />
         </div>
 
-        <TaskTable />
+        <TaskTable tasks={project?.tasks || []} />
       </div>
 
       {showCreateTaskModal ? (
