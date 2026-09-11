@@ -1,10 +1,21 @@
 import { Plus, Search } from "lucide-react";
 import ProjectCard from "../../components/Projects/ProjectCard";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import CreateProjectModal from "../../components/Projects/CreateProjectModal";
+import { useGetProjectsQuery } from "../../features/project/project.api";
+import type { Project } from "../../features/project/project.interface";
 
 const Projects = () => {
   const [createModalOpen, setCreateModalOpen] = useState(false);
+  const { data, isLoading } = useGetProjectsQuery();
+  const [projects, setProjects] = useState<Project[]>([]);
+
+  useEffect(() => {
+    if (data?.data?.projects) {
+      setProjects(data.data.projects);
+    }
+  }, [data]);
+
   return (
     <div className="min-h-screen space-y-6 px-8 py-10">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -50,29 +61,9 @@ const Projects = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        <ProjectCard
-          name="Website Redesign"
-          description="Redesign and improve the company website."
-          status="Planning"
-          tasks="12"
-          dueDate="Oct 05"
-        />
-
-        <ProjectCard
-          name="Mobile Application"
-          description="Cross-platform mobile application."
-          status="In Progress"
-          tasks="18"
-          dueDate="Oct 18"
-        />
-
-        <ProjectCard
-          name="Internal Dashboard"
-          description="Internal analytics and management dashboard."
-          status="Completed"
-          tasks="24"
-          dueDate="Sep 12"
-        />
+        {projects.map((project: Project) => (
+          <ProjectCard key={project.id} project={project} />
+        ))}
       </div>
 
       <CreateProjectModal

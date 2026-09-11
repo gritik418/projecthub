@@ -1,19 +1,12 @@
 import { CalendarDays, FolderKanban, ListTodo } from "lucide-react";
-import StatusBadge from "./StatusBadge";
+import type { Project } from "../../features/project/project.interface";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../features/auth/auth.slice";
 
-const ProjectCard = ({
-  name,
-  description,
-  status,
-  tasks,
-  dueDate,
-}: {
-  name: string;
-  description: string;
-  status: string;
-  tasks: string;
-  dueDate: string;
-}) => {
+const ProjectCard = ({ project }: { project: Project }) => {
+  const user = useSelector(selectUser);
+
+  if (!user) return null;
   return (
     <div className="rounded-xl border border-slate-800 bg-slate-800 p-5">
       <div className="flex items-start justify-between gap-4">
@@ -23,15 +16,15 @@ const ProjectCard = ({
           </div>
 
           <div className="min-w-0">
-            <h2 className="truncate font-semibold text-slate-100">{name}</h2>
+            <h2 className="truncate font-semibold text-slate-100">
+              {project.name}
+            </h2>
 
             <p className="mt-0.5 truncate text-sm text-slate-400">
-              {description}
+              {project.description}
             </p>
           </div>
         </div>
-
-        <StatusBadge status={status} />
       </div>
 
       <div className="mt-6 grid grid-cols-2 border-y border-slate-700 py-4">
@@ -40,7 +33,9 @@ const ProjectCard = ({
 
           <div>
             <p className="text-xs text-slate-500">Tasks</p>
-            <p className="mt-0.5 text-sm font-medium text-slate-200">{tasks}</p>
+            <p className="mt-0.5 text-sm font-medium text-slate-200">
+              {project._count?.tasks}
+            </p>
           </div>
         </div>
 
@@ -48,9 +43,9 @@ const ProjectCard = ({
           <CalendarDays size={15} className="text-slate-500" />
 
           <div>
-            <p className="text-xs text-slate-500">Due</p>
+            <p className="text-xs text-slate-500">Last Updated:</p>
             <p className="mt-0.5 text-sm font-medium text-slate-200">
-              {dueDate}
+              {project.updatedAt}
             </p>
           </div>
         </div>
@@ -59,12 +54,18 @@ const ProjectCard = ({
       <div className="mt-4 flex items-center justify-between">
         <div className="flex items-center gap-2.5">
           <div className="flex h-7 w-7 items-center justify-center rounded-full bg-indigo-100/70 text-xs font-semibold text-indigo-700">
-            R
+            {project.createdBy.name.charAt(0)}
           </div>
 
           <div>
             <p className="text-[11px] text-slate-500">Created by</p>
-            <p className="text-sm font-medium text-slate-200">Ritik Gupta</p>
+            {user.id === project.createdById ? (
+              <p className="text-sm font-medium text-green-400">You</p>
+            ) : (
+              <p className="text-sm font-medium text-slate-200">
+                {project.createdBy.name}
+              </p>
+            )}
           </div>
         </div>
 
