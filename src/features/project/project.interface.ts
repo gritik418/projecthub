@@ -47,3 +47,13 @@ export interface Project {
     tasks: 0;
   };
 }
+
+export interface GetProjectDetailsResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    project: ProjectDetails;
+  };
+}
+
+export interface ProjectDetails extends Project {}

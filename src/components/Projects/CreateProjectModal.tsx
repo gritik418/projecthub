@@ -6,6 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import CreateProjectSchema from "../../schemas/project/create-project.schema";
 import { useCreateProjectMutation } from "../../features/project/project.api";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../features/auth/auth.slice";
 
 interface CreateProjectModalProps {
   open: boolean;
@@ -13,6 +15,7 @@ interface CreateProjectModalProps {
 }
 
 const CreateProjectModal = ({ open, onClose }: CreateProjectModalProps) => {
+  const user = useSelector(selectUser);
   const [createProject] = useCreateProjectMutation();
 
   const {
@@ -31,6 +34,7 @@ const CreateProjectModal = ({ open, onClose }: CreateProjectModalProps) => {
     resolver: zodResolver(CreateProjectSchema),
   });
   if (!open) return null;
+  if (!user || user.role === "DEVELOPER") return null;
 
   const handleCreateProject = async (values: CreateProjectDto) => {
     try {

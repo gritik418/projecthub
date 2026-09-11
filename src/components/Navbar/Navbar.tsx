@@ -1,6 +1,6 @@
 import { Bell } from "lucide-react";
 import { useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { selectUser } from "../../features/auth/auth.slice";
 import Logo from "../Logo/Logo";
 import NavItem from "./NavItem";
@@ -10,6 +10,7 @@ const AUTH_ROUTES = ["/login", "/register"];
 
 const Navbar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   const isAuthRoute = AUTH_ROUTES.some((route) =>
     location.pathname.startsWith(route),
@@ -25,7 +26,23 @@ const Navbar = () => {
         <Logo />
 
         <nav className="hidden items-center gap-1 md:flex">
-          <NavItem label="Dashboard" active />
+          <NavItem
+            label="Dashboard"
+            onClick={() => {
+              navigate("/dashboard");
+            }}
+            active={location.pathname.startsWith("/dashboard")}
+          />
+
+          {user?.role !== "DEVELOPER" ? (
+            <NavItem
+              label="Projects"
+              onClick={() => {
+                navigate("/projects");
+              }}
+              active={location.pathname.startsWith("/projects")}
+            />
+          ) : null}
         </nav>
 
         <div className="flex items-center gap-2">

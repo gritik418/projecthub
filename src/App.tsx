@@ -6,8 +6,13 @@ import AuthProvider from "./components/AuthProvider/AuthProvider";
 import Navbar from "./components/Navbar/Navbar";
 import Dashboard from "./pages/dashboard/Dashboard";
 import Projects from "./pages/projects/Projects";
+import ProjectDetails from "./pages/projects/ProjectDetails";
+import { useSelector } from "react-redux";
+import { selectUser } from "./features/auth/auth.slice";
 
 function App() {
+  const user = useSelector(selectUser);
+
   return (
     <Router>
       <AuthProvider>
@@ -16,7 +21,14 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/projects" element={<Projects />} />
+
+          {user && user.role !== "DEVELOPER" ? (
+            <Route path="/projects" element={<Projects />} />
+          ) : null}
+
+          {user && user.role !== "DEVELOPER" ? (
+            <Route path="/projects/:projectId" element={<ProjectDetails />} />
+          ) : null}
         </Routes>
       </AuthProvider>
     </Router>

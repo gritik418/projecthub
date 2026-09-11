@@ -1,7 +1,7 @@
 import { Plus, Search } from "lucide-react";
-import ProjectCard from "../../components/Projects/ProjectCard";
 import { useEffect, useState } from "react";
 import CreateProjectModal from "../../components/Projects/CreateProjectModal";
+import ProjectCard from "../../components/Projects/ProjectCard";
 import { useGetProjectsQuery } from "../../features/project/project.api";
 import type { Project } from "../../features/project/project.interface";
 

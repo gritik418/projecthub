@@ -2,11 +2,14 @@ import { CalendarDays, FolderKanban, ListTodo } from "lucide-react";
 import type { Project } from "../../features/project/project.interface";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../features/auth/auth.slice";
+import { useNavigate } from "react-router-dom";
 
 const ProjectCard = ({ project }: { project: Project }) => {
   const user = useSelector(selectUser);
-
   if (!user) return null;
+
+  const navigate = useNavigate();
+
   return (
     <div className="rounded-xl border border-slate-800 bg-slate-800 p-5">
       <div className="flex items-start justify-between gap-4">
@@ -69,7 +72,12 @@ const ProjectCard = ({ project }: { project: Project }) => {
           </div>
         </div>
 
-        <button className="text-sm font-medium text-indigo-400 transition hover:text-indigo-300">
+        <button
+          onClick={() => {
+            navigate(`/projects/${project.id}`);
+          }}
+          className="text-sm cursor-pointer font-medium text-indigo-400 transition hover:text-indigo-300"
+        >
           View Project
         </button>
       </div>
