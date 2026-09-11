@@ -2,6 +2,7 @@ import type { LoginDto } from "../../schemas/auth/login.schema";
 import type { RegisterDto } from "../../schemas/auth/register.schema";
 import baseApi from "../../store/api/base-api";
 import type {
+  GetMeResponse,
   LoginResponse,
   RefreshTokenResponse,
   RegisterResponse,
@@ -31,10 +32,19 @@ const authApi = baseApi.injectEndpoints({
         credentials: "include",
       }),
     }),
+    getMe: build.query<GetMeResponse, void>({
+      query: () => ({
+        url: "/auth/me",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
+export default authApi;
+
 export const {
+  useGetMeQuery,
   useLoginMutation,
   useRegisterMutation,
   useRefreshTokenMutation,

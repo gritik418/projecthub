@@ -1,7 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
-import { saveToken, selectAccessToken } from "../../features/auth/auth.slice";
+import {
+  saveToken,
+  saveUser,
+  selectAccessToken,
+} from "../../features/auth/auth.slice";
 import { useEffect, useState } from "react";
-import { useRefreshTokenMutation } from "../../features/auth/auth.api";
+import {
+  useGetMeQuery,
+  useRefreshTokenMutation,
+} from "../../features/auth/auth.api";
 import { type AppDispatch } from "../../store";
 import { Navigate, useLocation } from "react-router-dom";
 
@@ -25,6 +32,21 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     location.pathname.startsWith(route),
   );
 
+  const {
+    data: meResponse,
+    isLoading: isLoadingMe,
+    isError: isMeError,
+  } = useGetMeQuery(undefined, {
+    skip: !accessToken,
+  });
+
+  useEffect(() => {
+    if (meResponse?.data) {
+      dispatch(saveUser(meResponse.data));
+      setIsCheckingAuth(false);
+    }
+  }, [meResponse, dispatch]);
+
   const handleRefreshToken = async () => {
     try {
       const result = await refresh().unwrap();
@@ -35,24 +57,29 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             accessToken: result.data.accessToken,
           }),
         );
+      } else {
+        setIsCheckingAuth(false);
       }
     } catch (error) {
-      setIsCheckingAuth(false);
-    } finally {
       setIsCheckingAuth(false);
     }
   };
 
   useEffect(() => {
     if (accessToken) {
-      setIsCheckingAuth(false);
       return;
     }
 
     handleRefreshToken();
   }, [accessToken]);
 
-  if (isCheckingAuth) {
+  useEffect(() => {
+    if (accessToken && isMeError) {
+      setIsCheckingAuth(false);
+    }
+  }, [accessToken, isMeError]);
+
+  if (isCheckingAuth || (accessToken && isLoadingMe)) {
     return (
       <div className="flex min-h-screen items-center justify-center">
         Loading...

@@ -23,3 +23,20 @@ export interface RefreshTokenResponse {
     accessToken: string;
   };
 }
+
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: "ADMIN" | "PROJECT_MANAGER" | "DEVELOPER";
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface GetMeResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    user: User;
+  };
+}
