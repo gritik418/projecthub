@@ -5,6 +5,7 @@ import Register from "./pages/auth/Register";
 import AuthProvider from "./components/AuthProvider/AuthProvider";
 import Navbar from "./components/Navbar/Navbar";
 import Dashboard from "./pages/dashboard/Dashboard";
+import Projects from "./pages/projects/Projects";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/projects" element={<Projects />} />
         </Routes>
       </AuthProvider>
     </Router>

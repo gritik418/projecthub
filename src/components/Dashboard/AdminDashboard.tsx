@@ -1,8 +1,8 @@
-import { FolderKanban, ListTodo, AlertCircle, Users } from "lucide-react";
+import { AlertCircle, FolderKanban, ListTodo, Users } from "lucide-react";
 
+import StatItem from "./StatItem";
 import TaskFilters from "./TaskFilters";
 import TaskTable from "./TaskTable";
-import StatItem from "./StatItem";
 
 const AdminDashboard = () => {
   return (
