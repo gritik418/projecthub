@@ -15,3 +15,11 @@ export interface RegisterResponse {
   message: string;
   errors?: Partial<RegisterDto>;
 }
+
+export interface RefreshTokenResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    accessToken: string;
+  };
+}

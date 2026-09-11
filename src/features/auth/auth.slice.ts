@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import type { RootState } from "../../store";
 
 interface AuthState {
   accessToken: string | null;
@@ -24,6 +25,9 @@ const authSlice = createSlice({
     },
   },
 });
+
+export const selectAccessToken = (state: RootState) =>
+  state.authSlice.accessToken;
 
 export const { saveToken } = authSlice.actions;
 

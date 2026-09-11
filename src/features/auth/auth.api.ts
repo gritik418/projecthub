@@ -1,7 +1,11 @@
 import type { LoginDto } from "../../schemas/auth/login.schema";
 import type { RegisterDto } from "../../schemas/auth/register.schema";
 import baseApi from "../../store/api/base-api";
-import type { LoginResponse, RegisterResponse } from "./auth.interface";
+import type {
+  LoginResponse,
+  RefreshTokenResponse,
+  RegisterResponse,
+} from "./auth.interface";
 
 const authApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -17,9 +21,21 @@ const authApi = baseApi.injectEndpoints({
         url: "/auth/login",
         body: data,
         method: "POST",
+        credentials: "include",
+      }),
+    }),
+    refreshToken: build.mutation<RefreshTokenResponse, void>({
+      query: () => ({
+        url: "/auth/refresh",
+        method: "POST",
+        credentials: "include",
       }),
     }),
   }),
 });
 
-export const { useLoginMutation, useRegisterMutation } = authApi;
+export const {
+  useLoginMutation,
+  useRegisterMutation,
+  useRefreshTokenMutation,
+} = authApi;
