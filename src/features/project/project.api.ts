@@ -1,5 +1,9 @@
+import type { CreateProjectDto } from "../../schemas/project/create-project.schema";
 import baseApi from "../../store/api/base-api";
-import type { GetProjectsResponse } from "./project.interface";
+import type {
+  CreateProjectResponse,
+  GetProjectsResponse,
+} from "./project.interface";
 
 const projectApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -8,8 +12,17 @@ const projectApi = baseApi.injectEndpoints({
         url: "/project",
         method: "GET",
       }),
+      providesTags: ["Project"],
+    }),
+    createProject: build.mutation<CreateProjectResponse, CreateProjectDto>({
+      query: (data: CreateProjectDto) => ({
+        url: "/project",
+        body: data,
+        method: "POST",
+      }),
+      invalidatesTags: ["Project"],
     }),
   }),
 });
 
-export const { useGetProjectsQuery } = projectApi;
+export const { useGetProjectsQuery, useCreateProjectMutation } = projectApi;

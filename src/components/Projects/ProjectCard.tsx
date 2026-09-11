@@ -45,7 +45,7 @@ const ProjectCard = ({ project }: { project: Project }) => {
           <div>
             <p className="text-xs text-slate-500">Last Updated:</p>
             <p className="mt-0.5 text-sm font-medium text-slate-200">
-              {project.updatedAt}
+              {new Date(project.updatedAt).toDateString()}
             </p>
           </div>
         </div>

@@ -2,8 +2,17 @@ import { useEffect, useMemo, useState } from "react";
 import { useGetClientsQuery } from "../../features/client/client.api";
 import type { Client } from "../../features/client/client.interface";
 import { Check, ChevronDown, Search, UserRound } from "lucide-react";
+import type { UseFormSetValue } from "react-hook-form";
 
-const SelectClientDropdown = () => {
+const SelectClientDropdown = ({
+  setValue,
+}: {
+  setValue: UseFormSetValue<{
+    name: string;
+    clientId: string;
+    description?: string | undefined;
+  }>;
+}) => {
   const { data, isFetching } = useGetClientsQuery();
   const [clients, setClients] = useState<Client[]>();
   const [selectedClient, setSelectedClient] = useState<Client>();
@@ -27,13 +36,19 @@ const SelectClientDropdown = () => {
   }, [clientSearch, clients]);
 
   useEffect(() => {
+    if (selectedClient?.id) {
+      setValue("clientId", selectedClient.id);
+    }
+  }, [selectedClient]);
+
+  useEffect(() => {
     if (data?.data?.clients) {
       setClients(data.data.clients);
     }
   }, [data]);
 
   return (
-    <div>
+    <div className="mb-0">
       <label className="mb-2 block text-sm font-medium text-slate-200">
         Client
       </label>

@@ -61,9 +61,17 @@ const Projects = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-        {projects.map((project: Project) => (
-          <ProjectCard key={project.id} project={project} />
-        ))}
+        {isLoading ? (
+          <div className="py-16 text-center w-full lg:col-span-2">
+            Loading...
+          </div>
+        ) : (
+          <>
+            {projects.map((project: Project) => (
+              <ProjectCard key={project.id} project={project} />
+            ))}
+          </>
+        )}
       </div>
 
       <CreateProjectModal

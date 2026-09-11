@@ -6,6 +6,22 @@ export interface GetProjectsResponse {
   };
 }
 
+export interface CreateProjectResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    project: {
+      id: string;
+      name: string;
+      description: string;
+      clientId: string;
+      createdById: string;
+      createdAt: string;
+      updatedAt: string;
+    };
+  };
+}
+
 export interface Project {
   id: string;
   name: string;
