@@ -13,11 +13,14 @@ import TaskTable from "../../components/Dashboard/TaskTable";
 import { useGetProjectDetailsQuery } from "../../features/project/project.api";
 import { useEffect, useState } from "react";
 import type { ProjectDetails } from "../../features/project/project.interface";
+import CreateTaskModal from "../../components/Tasks/CreateTaskModal";
 
 export default function ProjectDetails() {
   const canCreateTask = true;
   const { projectId } = useParams();
   const [project, setProject] = useState<ProjectDetails>();
+  const [showCreateTaskModal, setShowCreateTaskModal] =
+    useState<boolean>(false);
 
   const { data, isLoading } = useGetProjectDetailsQuery(projectId!, {
     skip: !projectId,
@@ -76,7 +79,12 @@ export default function ProjectDetails() {
           </div>
 
           {canCreateTask && (
-            <button className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700">
+            <button
+              onClick={() => {
+                setShowCreateTaskModal(true);
+              }}
+              className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700"
+            >
               <Plus size={18} />
               Create Task
             </button>
@@ -136,6 +144,16 @@ export default function ProjectDetails() {
 
         <TaskTable />
       </div>
+
+      {showCreateTaskModal ? (
+        <CreateTaskModal
+          onClose={() => {
+            setShowCreateTaskModal(false);
+          }}
+          open={showCreateTaskModal}
+          projectId={projectId!}
+        />
+      ) : null}
     </div>
   );
 }
