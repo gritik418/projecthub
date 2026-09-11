@@ -6,9 +6,16 @@ import { useForm } from "react-hook-form";
 import type { LoginDto } from "../../schemas/auth/login.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import LoginSchema from "../../schemas/auth/login.schema";
+import { useLoginMutation } from "../../features/auth/auth.api";
+import { toast } from "react-toastify";
+import { useDispatch } from "react-redux";
+import type { AppDispatch } from "../../store";
+import { saveToken } from "../../features/auth/auth.slice";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [login] = useLoginMutation();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -24,10 +31,28 @@ const Login = () => {
     resolver: zodResolver(LoginSchema),
   });
 
-  const handleLogin = (data: LoginDto) => {
+  const handleLogin = async (data: LoginDto) => {
     try {
-      console.log(data);
-    } catch (error) {}
+      const result = await login(data).unwrap();
+
+      if (!result.data.accessToken) {
+        toast.error("Something went wrong.");
+      } else {
+        dispatch(saveToken({ accessToken: result.data.accessToken }));
+        toast.success(result.message || "Logged in successfully.");
+
+        navigate("/");
+      }
+    } catch (error: any) {
+      if (error.status === "FETCH_ERROR") {
+        toast.error(
+          "Unable to connect to the server. Please make sure the server is running.",
+        );
+        return;
+      }
+
+      toast.error(error?.data?.message || "Something went wrong.");
+    }
   };
 
   return (
