@@ -7,6 +7,8 @@ import SelectDeveloperDropdown from "./SelectDeveloperDropdown";
 import { useGetDevelopersQuery } from "../../features/user/user.api";
 import { useEffect, useState } from "react";
 import type { Developer } from "../../features/user/user.interface";
+import { useCreateTaskMutation } from "../../features/task/task.api";
+import { toast } from "react-toastify";
 
 interface CreateTaskModalProps {
   open: boolean;
@@ -20,6 +22,8 @@ const CreateTaskModal = ({
   projectId,
 }: CreateTaskModalProps) => {
   const { data } = useGetDevelopersQuery();
+  const [createTask] = useCreateTaskMutation();
+
   const [developers, setDevelopers] = useState<Developer[]>();
 
   const {
@@ -48,10 +52,26 @@ const CreateTaskModal = ({
   }, [data]);
 
   const handleCreateTask = async (values: CreateTaskDto) => {
-    console.log(values);
+    try {
+      const result = await createTask(values).unwrap();
 
-    reset();
-    onClose();
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.message);
+      }
+      reset();
+      onClose();
+    } catch (error: any) {
+      if (error.status === "FETCH_ERROR") {
+        toast.error(
+          "Unable to connect to the server. Please make sure the server is running.",
+        );
+        return;
+      }
+
+      toast.error(error?.data?.message || "Something went wrong.");
+    }
   };
 
   if (!open) return null;
