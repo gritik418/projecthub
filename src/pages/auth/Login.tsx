@@ -35,7 +35,7 @@ const Login = () => {
     try {
       const result = await login(data).unwrap();
 
-      if (!result.data.accessToken) {
+      if (!result.data?.accessToken) {
         toast.error("Something went wrong.");
       } else {
         dispatch(saveToken({ accessToken: result.data.accessToken }));

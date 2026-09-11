@@ -7,7 +7,7 @@ const RegisterSchema = z
       .min(3, "Name must be at least 3 characters.")
       .max(100, "Name must not exceed 100 characters."),
 
-    email: z.email("Invalid email address."),
+    email: z.string().email("Invalid email address."),
 
     password: z
       .string()
@@ -21,8 +21,8 @@ const RegisterSchema = z
 
     role: z
       .enum(["ADMIN", "PROJECT_MANAGER", "DEVELOPER"])
-      .optional()
-      .default("DEVELOPER"),
+      .default("DEVELOPER")
+      .optional(),
   })
   .superRefine((data, ctx) => {
     if (data.password !== data.passwordConfirmation) {
