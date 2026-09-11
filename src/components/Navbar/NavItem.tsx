@@ -10,7 +10,7 @@ const NavItem = ({ label, active }: NavItemProps) => {
       className={`relative rounded-xl px-4 py-2 text-sm font-medium transition ${
         active
           ? "bg-indigo-500/10 text-indigo-400"
-          : "text-slate-500 hover:bg-white/[0.03] hover:text-slate-300"
+          : "text-slate-500 hover:bg-white/3 hover:text-slate-300"
       }`}
     >
       {label}

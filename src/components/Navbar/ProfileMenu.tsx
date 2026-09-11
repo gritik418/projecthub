@@ -15,7 +15,7 @@ const ProfileMenu = ({ user }: { user: User | null }) => {
   }
 
   return (
-    <div className="group flex cursor-pointer items-center gap-2.5 rounded-xl px-2 py-1.5 transition hover:bg-white/[0.04]">
+    <div className="group flex cursor-pointer items-center gap-2.5 rounded-xl px-2 py-1.5 transition hover:bg-white/4">
       <div className="flex h-9 w-9 font-bold text-lg items-center justify-center rounded-xl bg-indigo-500/30 text-indigo-200 ring-1 ring-indigo-500/10">
         {user?.name.at(0)}
       </div>
@@ -26,7 +26,7 @@ const ProfileMenu = ({ user }: { user: User | null }) => {
         </p>
 
         <p className="mt-1 text-[10px] font-semibold uppercase text-slate-400">
-          {user?.role}
+          {user?.role.replaceAll("_", " ")}
         </p>
       </div>
 

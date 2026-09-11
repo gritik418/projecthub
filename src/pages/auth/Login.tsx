@@ -41,7 +41,7 @@ const Login = () => {
         dispatch(saveToken({ accessToken: result.data.accessToken }));
         toast.success(result.message || "Logged in successfully.");
 
-        navigate("/");
+        navigate("/dashboard");
       }
     } catch (error: any) {
       if (error.status === "FETCH_ERROR") {
@@ -58,8 +58,8 @@ const Login = () => {
   return (
     <main className="min-h-screen bg-[#070B16] text-white flex overflow-hidden">
       <div className="pointer-events-none fixed inset-0">
-        <div className="absolute -top-40 -left-40 h-[500px] w-[500px] rounded-full bg-indigo-600/15 blur-[140px]" />
-        <div className="absolute -bottom-40 -right-40 h-[500px] w-[500px] rounded-full bg-violet-600/10 blur-[140px]" />
+        <div className="absolute -top-40 -left-40 h-125 w-125 rounded-full bg-indigo-600/15 blur-[140px]" />
+        <div className="absolute -bottom-40 -right-40 h-125 w-125 rounded-full bg-violet-600/10 blur-[140px]" />
       </div>
 
       <section className="hidden lg:flex relative w-1/2 flex-col justify-between border-r border-white/5 px-16 py-12">
@@ -117,7 +117,7 @@ const Login = () => {
             </p>
           </div>
 
-          <div className="rounded-2xl border border-white/8 bg-white/[0.025] p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
+          <div className="rounded-2xl border border-white/8 bg-white/2.5 p-6 shadow-2xl shadow-black/20 backdrop-blur-xl">
             <form onSubmit={handleSubmit(handleLogin)} className="space-y-5">
               <div>
                 <label
@@ -138,7 +138,7 @@ const Login = () => {
                     id="email"
                     type="email"
                     placeholder="you@example.com"
-                    className="h-12 w-full rounded-xl border border-white/8 bg-black/20 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-indigo-500/60 focus:bg-indigo-500/[0.03] focus:ring-2 focus:ring-indigo-500/10"
+                    className="h-12 w-full rounded-xl border border-white/8 bg-black/20 pl-11 pr-4 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-indigo-500/60 focus:bg-indigo-500/3 focus:ring-2 focus:ring-indigo-500/10"
                     required
                   />
                 </div>
@@ -171,7 +171,7 @@ const Login = () => {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className="h-12 w-full rounded-xl border border-white/8 bg-black/20 pl-11 pr-11 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-indigo-500/60 focus:bg-indigo-500/[0.03] focus:ring-2 focus:ring-indigo-500/10"
+                    className="h-12 w-full rounded-xl border border-white/8 bg-black/20 pl-11 pr-11 text-sm text-white outline-none transition placeholder:text-slate-600 focus:border-indigo-500/60 focus:bg-indigo-500/3 focus:ring-2 focus:ring-indigo-500/10"
                     required
                   />
 

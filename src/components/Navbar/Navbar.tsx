@@ -21,7 +21,7 @@ const Navbar = () => {
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/5 bg-gray-800 backdrop-blur-xl">
-      <div className="mx-auto flex h-[68px] max-w-[1600px] items-center justify-between px-6 lg:px-10">
+      <div className="mx-auto flex h-17 max-w-[1600px] items-center justify-between px-6 lg:px-10">
         <Logo />
 
         <nav className="hidden items-center gap-1 md:flex">
@@ -31,7 +31,7 @@ const Navbar = () => {
         <div className="flex items-center gap-2">
           <button
             type="button"
-            className="relative flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-white/[0.04] hover:text-slate-300"
+            className="relative flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-white/4 hover:text-slate-300"
           >
             <Bell size={18} />
 
