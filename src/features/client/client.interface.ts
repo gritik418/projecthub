@@ -13,4 +13,7 @@ export interface Client {
   company?: string;
   createdAt: string;
   updatedAt: string;
+  _count: {
+    projects: number;
+  };
 }

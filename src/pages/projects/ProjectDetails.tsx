@@ -8,12 +8,18 @@ import {
 } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 
-import TaskFilters from "../../components/Dashboard/TaskFilters";
-import TaskTable from "../../components/Dashboard/TaskTable";
-import { useGetProjectDetailsQuery } from "../../features/project/project.api";
 import { useEffect, useState } from "react";
-import type { ProjectDetails } from "../../features/project/project.interface";
+import TaskTable from "../../components/Dashboard/TaskTable";
 import CreateTaskModal from "../../components/Tasks/CreateTaskModal";
+import { useGetProjectDetailsQuery } from "../../features/project/project.api";
+import type { ProjectDetails } from "../../features/project/project.interface";
+
+type TasksCount = {
+  todo: number;
+  in_progress: number;
+  in_review: number;
+  done: number;
+};
 
 export default function ProjectDetails() {
   const canCreateTask = true;
@@ -21,6 +27,13 @@ export default function ProjectDetails() {
   const [project, setProject] = useState<ProjectDetails>();
   const [showCreateTaskModal, setShowCreateTaskModal] =
     useState<boolean>(false);
+
+  const [tasksCount, setTasksCount] = useState<TasksCount>({
+    done: 0,
+    in_progress: 0,
+    in_review: 0,
+    todo: 0,
+  });
 
   const { data, isLoading } = useGetProjectDetailsQuery(projectId!, {
     skip: !projectId,
@@ -33,6 +46,26 @@ export default function ProjectDetails() {
       setProject(data.data.project);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (!project) return;
+
+    const todoTasks = project.tasks.filter((task) => task.status === "TODO");
+    const inProgressTasks = project.tasks.filter(
+      (task) => task.status === "IN_PROGRESS",
+    );
+    const inReviewTasks = project.tasks.filter(
+      (task) => task.status === "IN_REVIEW",
+    );
+    const doneTasks = project.tasks.filter((task) => task.status === "DONE");
+
+    setTasksCount({
+      todo: todoTasks.length,
+      in_progress: inProgressTasks.length,
+      done: doneTasks.length,
+      in_review: inReviewTasks.length,
+    });
+  }, [project]);
 
   if (isLoading) {
     return (
@@ -112,17 +145,19 @@ export default function ProjectDetails() {
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         <Stat
           label="Total Tasks"
           value={(project?._count.tasks || 0).toString()}
         />
 
-        <Stat label="To Do" value="8" />
+        <Stat label="To Do" value={tasksCount.todo.toString()} />
 
-        <Stat label="In Progress" value="10" />
+        <Stat label="In Progress" value={tasksCount.in_progress.toString()} />
 
-        <Stat label="Completed" value="6" />
+        <Stat label="In Review" value={tasksCount.in_review.toString()} />
+
+        <Stat label="Done" value={tasksCount.done.toString()} />
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-800">
@@ -138,8 +173,6 @@ export default function ProjectDetails() {
               Manage and track tasks for this project.
             </p>
           </div>
-
-          <TaskFilters />
         </div>
 
         <TaskTable tasks={project?.tasks || []} />
