@@ -27,3 +27,8 @@ export interface GetNotificationsResponse {
     notifications: Notification[];
   };
 }
+
+export interface MarkNotificationsResponse {
+  success: boolean;
+  message: string;
+}

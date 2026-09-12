@@ -3,6 +3,10 @@ import { useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { selectNotifications } from "../../features/notification/notification.slice";
 import NotificationItem from "./NotificationItem";
+import {
+  useMarkAllAsReadMutation,
+  useMarkAsReadMutation,
+} from "../../features/notification/notification.api";
 
 type NotificationProps = {
   isOpen: boolean;
@@ -11,6 +15,8 @@ type NotificationProps = {
 
 const NotificationDropdown = ({ isOpen, setIsOpen }: NotificationProps) => {
   const notifications = useSelector(selectNotifications);
+  const [markAllNotificationsAsRead] = useMarkAllAsReadMutation();
+  const [markNotificationAsRead] = useMarkAsReadMutation();
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -35,9 +41,21 @@ const NotificationDropdown = ({ isOpen, setIsOpen }: NotificationProps) => {
     };
   }, []);
 
-  const markAsRead = () => {};
+  const markAsRead = async (id: string) => {
+    try {
+      await markNotificationAsRead(id).unwrap();
+    } catch (error) {
+      console.error("Failed to mark notifications as read:", error);
+    }
+  };
 
-  const markAllAsRead = () => {};
+  const handleMarkAllAsRead = async () => {
+    try {
+      await markAllNotificationsAsRead().unwrap();
+    } catch (error) {
+      console.error("Failed to mark notifications as read:", error);
+    }
+  };
 
   return (
     <div ref={dropdownRef} className="relative">
@@ -59,7 +77,7 @@ const NotificationDropdown = ({ isOpen, setIsOpen }: NotificationProps) => {
             {unreadCount > 0 && (
               <button
                 type="button"
-                onClick={markAllAsRead}
+                onClick={handleMarkAllAsRead}
                 className="flex items-center gap-1.5 text-xs font-medium text-indigo-400 transition hover:text-indigo-300"
               >
                 <CheckCheck size={14} />

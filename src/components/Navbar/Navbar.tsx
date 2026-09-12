@@ -6,7 +6,7 @@ import Logo from "../Logo/Logo";
 import NavItem from "./NavItem";
 import ProfileMenu from "./ProfileMenu";
 import NotificationDropdown from "../Notification/NotificationDropdown";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { selectNotifications } from "../../features/notification/notification.slice";
 
 const AUTH_ROUTES = ["/login", "/register"];
@@ -20,6 +20,10 @@ const Navbar = () => {
   const isAuthRoute = AUTH_ROUTES.some((route) =>
     location.pathname.startsWith(route),
   );
+
+  const notificationCount = useMemo(() => {
+    return notifications.filter((notification) => !notification.isRead).length;
+  }, [notifications]);
 
   if (isAuthRoute) return null;
 
@@ -78,9 +82,11 @@ const Navbar = () => {
             >
               <Bell size={18} />
 
-              <span className="absolute right-1 text-white text-[10px] text-center flex items-center justify-center top-0 h-4 w-4 rounded-full bg-indigo-500">
-                {notifications.length > 9 ? "9+" : notifications.length}
-              </span>
+              {notificationCount ? (
+                <span className="absolute right-1 text-white text-[10px] text-center flex items-center justify-center top-0 h-4 w-4 rounded-full bg-indigo-500">
+                  {notificationCount > 9 ? "9+" : notificationCount}
+                </span>
+              ) : null}
             </button>
 
             <NotificationDropdown isOpen={isOpen} setIsOpen={setIsOpen} />
