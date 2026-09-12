@@ -13,6 +13,7 @@ import Clients from "./pages/client/Clients";
 import UsersPage from "./pages/users/Users";
 import { SocketManager } from "./components/Socket/SocketManager";
 import NotFound from "./pages/notfound/NotFound";
+import Home from "./pages/home/Home";
 
 function App() {
   const user = useSelector(selectUser);
@@ -23,6 +24,7 @@ function App() {
         <SocketManager />
         <Navbar />
         <Routes>
+          <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/dashboard" element={<Dashboard />} />
