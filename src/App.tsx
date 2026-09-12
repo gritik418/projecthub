@@ -12,6 +12,7 @@ import { selectUser } from "./features/auth/auth.slice";
 import Clients from "./pages/client/Clients";
 import UsersPage from "./pages/users/Users";
 import { SocketManager } from "./components/Socket/SocketManager";
+import NotFound from "./pages/notfound/NotFound";
 
 function App() {
   const user = useSelector(selectUser);
@@ -37,6 +38,8 @@ function App() {
           <Route path="/projects" element={<Projects />} />
 
           <Route path="/projects/:projectId" element={<ProjectDetails />} />
+
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthProvider>
     </Router>
