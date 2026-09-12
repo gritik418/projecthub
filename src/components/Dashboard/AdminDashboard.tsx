@@ -1,17 +1,33 @@
-import { AlertCircle, FolderKanban, ListTodo, Users } from "lucide-react";
+import {
+  AlertCircle,
+  Check,
+  Eye,
+  FolderKanban,
+  ListTodo,
+  Notebook,
+  Users,
+  Watch,
+} from "lucide-react";
 
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { useSearchParams } from "react-router-dom";
+import { useGetDashboardAnalyticsQuery } from "../../features/dashboard/dashboard.api";
+import type { AdminDashboardResponseDto } from "../../features/dashboard/dashboard.interface";
+import { useGetTasksQuery } from "../../features/task/task.api";
+import type { Task } from "../../features/task/task.interface";
+import { selectActiveUsers } from "../../features/user/user.slice";
 import StatItem from "./StatItem";
 import TaskFilters from "./TaskFilters";
 import TaskTable from "./TaskTable";
-import { useGetTasksQuery } from "../../features/task/task.api";
-import { useEffect, useState } from "react";
-import type { Task } from "../../features/task/task.interface";
-import { useSearchParams } from "react-router-dom";
-import { selectActiveUsers } from "../../features/user/user.slice";
-import { useSelector } from "react-redux";
 
 const AdminDashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const { data: analyticsData, isLoading: analyticsLoading } =
+    useGetDashboardAnalyticsQuery();
+
+  const [analytics, setAnalytics] = useState<AdminDashboardResponseDto>();
 
   const activeUsers = useSelector(selectActiveUsers);
   const { data, isLoading } = useGetTasksQuery({
@@ -28,8 +44,13 @@ const AdminDashboard = () => {
     }
   }, [data]);
 
-  console.log(searchParams.get("status"));
-  if (isLoading) {
+  useEffect(() => {
+    if (analyticsData?.data) {
+      setAnalytics(analyticsData.data as AdminDashboardResponseDto);
+    }
+  }, [analyticsData]);
+
+  if (isLoading || analyticsLoading) {
     return (
       <div className="py-10">
         <p className="text-center text-base">Loading...</p>
@@ -50,13 +71,54 @@ const AdminDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <StatItem icon={FolderKanban} label="Projects" value="12" />
-        <StatItem icon={ListTodo} label="Tasks" value="86" />
-        <StatItem icon={AlertCircle} label="Overdue" value="7" />
+        <StatItem
+          icon={FolderKanban}
+          label="Total Projects"
+          value={(analytics?.totalProjects ?? 0).toString()}
+        />
+
+        <StatItem
+          icon={ListTodo}
+          label="Total Tasks"
+          value={(analytics?.totalTasks ?? 0).toString()}
+        />
+
+        <StatItem
+          icon={AlertCircle}
+          label="Overdue Tasks"
+          value={(analytics?.overdueTasks ?? 0).toString()}
+        />
+
         <StatItem
           icon={Users}
           label="Online"
           value={activeUsers.length.toString()}
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatItem
+          icon={Notebook}
+          label="Todo Tasks"
+          value={(analytics?.tasksByStatus.todo ?? 0).toString()}
+        />
+
+        <StatItem
+          icon={Watch}
+          label="In Progress Tasks"
+          value={(analytics?.tasksByStatus.inProgress ?? 0).toString()}
+        />
+
+        <StatItem
+          icon={Eye}
+          label="In Review Tasks"
+          value={(analytics?.tasksByStatus.inReview ?? 0).toString()}
+        />
+
+        <StatItem
+          icon={Check}
+          label="Done Tasks"
+          value={(analytics?.tasksByStatus.done ?? 0).toString()}
         />
       </div>
 

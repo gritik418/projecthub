@@ -1,15 +1,30 @@
-import { FolderKanban, ListTodo, CalendarDays } from "lucide-react";
-import TaskFilters from "./TaskFilters";
-import TaskTable from "./TaskTable";
-import StatItem from "./StatItem";
-import ProjectItem from "./ProjectItem";
+import {
+  CalendarDays,
+  Check,
+  Eye,
+  FolderKanban,
+  ListTodo,
+  Notebook,
+  Watch,
+} from "lucide-react";
 import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useGetDashboardAnalyticsQuery } from "../../features/dashboard/dashboard.api";
+import type { ProjectManagerDashboardResponseDto } from "../../features/dashboard/dashboard.interface";
 import { useGetTasksQuery } from "../../features/task/task.api";
 import type { Task } from "../../features/task/task.interface";
-import { useSearchParams } from "react-router-dom";
+import StatItem from "./StatItem";
+import TaskFilters from "./TaskFilters";
+import TaskTable from "./TaskTable";
 
 const PMDashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { data: analyticsData, isLoading: analyticsLoading } =
+    useGetDashboardAnalyticsQuery();
+
+  const [analytics, setAnalytics] =
+    useState<ProjectManagerDashboardResponseDto>();
+
   const { data, isLoading } = useGetTasksQuery({
     status: searchParams.get("status") || undefined,
     priority: searchParams.get("priority") || undefined,
@@ -20,18 +35,26 @@ const PMDashboard = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
+    if (analyticsData?.data) {
+      setAnalytics(analyticsData.data as ProjectManagerDashboardResponseDto);
+    }
+  }, [analyticsData]);
+
+  useEffect(() => {
     if (data?.data?.tasks) {
       setTasks(data.data.tasks);
     }
   }, [data]);
 
-  if (isLoading) {
+  if (isLoading || analyticsLoading) {
     return (
       <div className="py-10">
         <p className="text-center text-base">Loading...</p>
       </div>
     );
   }
+
+  console.log(analytics);
 
   return (
     <div className="min-h-screen space-y-6 px-8 py-10">
@@ -44,23 +67,49 @@ const PMDashboard = () => {
         </p>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatItem icon={FolderKanban} label="My Projects" value="6" />
-        <StatItem icon={ListTodo} label="Total Tasks" value="48" />
-        <StatItem icon={CalendarDays} label="Due This Week" value="9" />
+        <StatItem
+          icon={FolderKanban}
+          label="My Projects"
+          value={(analytics?.projects.total ?? 0).toString()}
+        />
+
+        <StatItem
+          icon={ListTodo}
+          label="Active Projects"
+          value={(analytics?.projects.active ?? 0).toString()}
+        />
+
+        <StatItem
+          icon={CalendarDays}
+          label="Done Projects"
+          value={(analytics?.projects.completed ?? 0).toString()}
+        />
       </div>
 
-      <div className="rounded-xl border border-slate-800 bg-slate-800 p-5">
-        <div>
-          <h2 className="text-2xl font-semibold text-slate-100">My Projects</h2>
-          <p className="mt-1 text-base text-slate-300">
-            Projects you are currently managing.
-          </p>
-        </div>
-        <div className="mt-4 space-y-2">
-          <ProjectItem name="ProjectHub" tasks="18 tasks" />
-          <ProjectItem name="Website Redesign" tasks="12 tasks" />
-          <ProjectItem name="Mobile Application" tasks="18 tasks" />
-        </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <StatItem
+          icon={Notebook}
+          label="Todo Tasks"
+          value={(analytics?.tasks.todo ?? 0).toString()}
+        />
+
+        <StatItem
+          icon={Watch}
+          label="In Progress Tasks"
+          value={(analytics?.tasks.inProgress ?? 0).toString()}
+        />
+
+        <StatItem
+          icon={Eye}
+          label="In Review Tasks"
+          value={(analytics?.tasks.inReview ?? 0).toString()}
+        />
+
+        <StatItem
+          icon={Check}
+          label="Done Tasks"
+          value={(analytics?.tasks.done ?? 0).toString()}
+        />
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-800">
@@ -68,7 +117,7 @@ const PMDashboard = () => {
           <div>
             <h2 className="text-2xl font-semibold text-slate-100">Tasks </h2>
             <p className="mt-1 text-base text-slate-300">
-              Upcoming and assigned tasks.
+              Tasks from your projects.
             </p>
           </div>
           <TaskFilters

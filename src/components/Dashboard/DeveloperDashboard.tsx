@@ -1,15 +1,22 @@
-import { ListTodo, Clock, AlertCircle } from "lucide-react";
+import { ListTodo } from "lucide-react";
 
+import { useEffect, useState } from "react";
+import { useSearchParams } from "react-router-dom";
+import { useGetDashboardAnalyticsQuery } from "../../features/dashboard/dashboard.api";
+import type { DeveloperDashboardResponseDto } from "../../features/dashboard/dashboard.interface";
+import { useGetTasksQuery } from "../../features/task/task.api";
+import type { Task } from "../../features/task/task.interface";
+import StatItem from "./StatItem";
 import TaskFilters from "./TaskFilters";
 import TaskTable from "./TaskTable";
-import StatItem from "./StatItem";
-import { useGetTasksQuery } from "../../features/task/task.api";
-import { useEffect, useState } from "react";
-import type { Task } from "../../features/task/task.interface";
-import { useSearchParams } from "react-router-dom";
 
 const DeveloperDashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { data: analyticsData, isLoading: analyticsLoading } =
+    useGetDashboardAnalyticsQuery();
+
+  const [analytics, setAnalytics] = useState<DeveloperDashboardResponseDto>();
+
   const { data, isLoading } = useGetTasksQuery({
     status: searchParams.get("status") || undefined,
     priority: searchParams.get("priority") || undefined,
@@ -20,12 +27,18 @@ const DeveloperDashboard = () => {
   const [tasks, setTasks] = useState<Task[]>([]);
 
   useEffect(() => {
+    if (analyticsData?.data) {
+      setAnalytics(analyticsData.data as DeveloperDashboardResponseDto);
+    }
+  }, [analyticsData]);
+
+  useEffect(() => {
     if (data?.data?.tasks) {
       setTasks(data.data.tasks);
     }
   }, [data]);
 
-  if (isLoading) {
+  if (isLoading || analyticsLoading) {
     return (
       <div className="py-10">
         <p className="text-center text-base">Loading...</p>
@@ -46,11 +59,11 @@ const DeveloperDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <StatItem icon={ListTodo} label="Assigned" value="14" />
-
-        <StatItem icon={Clock} label="In Progress" value="5" />
-
-        <StatItem icon={AlertCircle} label="Urgent" value="2" />
+        <StatItem
+          icon={ListTodo}
+          label="Assigned"
+          value={(analytics?.assignedTasks.length ?? 0).toString()}
+        />
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-800">
