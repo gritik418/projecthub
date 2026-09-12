@@ -34,13 +34,9 @@ function App() {
             <Route path="/users" element={<UsersPage />} />
           ) : null}
 
-          {user && user.role !== "DEVELOPER" ? (
-            <Route path="/projects" element={<Projects />} />
-          ) : null}
+          <Route path="/projects" element={<Projects />} />
 
-          {user && user.role !== "DEVELOPER" ? (
-            <Route path="/projects/:projectId" element={<ProjectDetails />} />
-          ) : null}
+          <Route path="/projects/:projectId" element={<ProjectDetails />} />
         </Routes>
       </AuthProvider>
     </Router>

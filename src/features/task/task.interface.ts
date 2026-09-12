@@ -44,3 +44,8 @@ export interface GetTaskQueryParams {
   dueFrom?: string;
   dueTo?: string;
 }
+
+export interface UpdateTaskStatusResponse {
+  success: boolean;
+  message: string;
+}

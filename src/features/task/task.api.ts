@@ -1,9 +1,11 @@
 import type { CreateTaskDto } from "../../schemas/task/create-task.schema";
+import type { UpdateTaskStatusDto } from "../../schemas/task/update-task-status.schema";
 import baseApi from "../../store/api/base-api";
 import type {
   CreateTaskResponse,
   GetTaskQueryParams,
   GetTasksResponse,
+  UpdateTaskStatusResponse,
 } from "./task.interface";
 
 const taskApi = baseApi.injectEndpoints({
@@ -24,8 +26,24 @@ const taskApi = baseApi.injectEndpoints({
           params: params,
         };
       },
+      providesTags: ["Tasks"],
+    }),
+    updateTaskStatus: build.mutation<
+      UpdateTaskStatusResponse,
+      { data: UpdateTaskStatusDto; taskId: string }
+    >({
+      query: ({ data, taskId }) => ({
+        url: `/task/${taskId}/status`,
+        method: "PATCH",
+        body: data,
+      }),
+      invalidatesTags: ["Tasks"],
     }),
   }),
 });
 
-export const { useCreateTaskMutation, useGetTasksQuery } = taskApi;
+export const {
+  useCreateTaskMutation,
+  useGetTasksQuery,
+  useUpdateTaskStatusMutation,
+} = taskApi;

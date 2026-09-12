@@ -1,12 +1,13 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { io, type Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 import { setActiveUsers } from "../../features/user/user.slice";
 import type { AppDispatch, RootState } from "../../store";
 
-const API_URL = import.meta.env.VITE_API_URL;
-
-let socket: Socket | null = null;
+export const socket = io(import.meta.env.VITE_API_URL, {
+  transports: ["websocket"],
+  autoConnect: false,
+});
 
 export const SocketManager = () => {
   const accessToken = useSelector(
@@ -17,22 +18,15 @@ export const SocketManager = () => {
 
   useEffect(() => {
     if (!accessToken) {
-      socket?.disconnect();
-      socket = null;
+      socket.disconnect();
       return;
     }
 
-    if (socket?.connected) {
-      return;
-    }
+    socket.auth = {
+      token: `Bearer ${accessToken}`,
+    };
 
-    socket = io(API_URL, {
-      transports: ["websocket"],
-      autoConnect: false,
-      auth: {
-        token: `Bearer ${accessToken}`,
-      },
-    });
+    socket.connect();
 
     socket.on("connect", () => {
       console.log("Socket connected:", socket?.id);
@@ -50,11 +44,10 @@ export const SocketManager = () => {
       dispatch(setActiveUsers({ users }));
     });
 
-    socket.connect();
-
     return () => {
-      socket?.disconnect();
-      socket = null;
+      socket.off("connect");
+      socket.off("connect_error");
+      socket.off("disconnect");
     };
   }, [accessToken]);
 

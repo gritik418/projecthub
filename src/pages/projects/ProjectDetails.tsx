@@ -13,6 +13,10 @@ import TaskTable from "../../components/Dashboard/TaskTable";
 import CreateTaskModal from "../../components/Tasks/CreateTaskModal";
 import { useGetProjectDetailsQuery } from "../../features/project/project.api";
 import type { ProjectDetails } from "../../features/project/project.interface";
+import { useSelector } from "react-redux";
+import { selectUser } from "../../features/auth/auth.slice";
+import { socket } from "../../components/Socket/SocketManager";
+import type { TaskStatus } from "../../schemas/task/create-task.schema";
 
 type TasksCount = {
   todo: number;
@@ -22,7 +26,8 @@ type TasksCount = {
 };
 
 export default function ProjectDetails() {
-  const canCreateTask = true;
+  const user = useSelector(selectUser);
+  const canCreateTask = user && user.role !== "DEVELOPER";
   const { projectId } = useParams();
   const [project, setProject] = useState<ProjectDetails>();
   const [showCreateTaskModal, setShowCreateTaskModal] =
@@ -46,6 +51,60 @@ export default function ProjectDetails() {
       setProject(data.data.project);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (!projectId) return;
+
+    const joinProject = () => {
+      socket.emit("join-project", projectId);
+    };
+
+    if (socket.connected) {
+      joinProject();
+    }
+
+    socket.on("connect", joinProject);
+
+    return () => {
+      socket.off("connect", joinProject);
+
+      if (socket.connected) {
+        socket.emit("leave-project", projectId);
+      }
+    };
+  }, [projectId]);
+
+  useEffect(() => {
+    const handleTaskStatusUpdated = (data: {
+      taskId: string;
+      projectId: string;
+      status: TaskStatus;
+    }) => {
+      if (projectId !== data.projectId) return;
+
+      setProject((currentProject) => {
+        if (!currentProject) return currentProject;
+
+        return {
+          ...currentProject,
+          tasks: currentProject.tasks.map((task) =>
+            task.id === data.taskId
+              ? {
+                  ...task,
+                  status: data.status,
+                }
+              : task,
+          ),
+        };
+      });
+    };
+
+    socket.on("task-status-updated", handleTaskStatusUpdated);
+
+    return () => {
+      socket.off("task-status-updated", handleTaskStatusUpdated);
+    };
+  }, [projectId]);
 
   useEffect(() => {
     if (!project) return;
@@ -124,25 +183,27 @@ export default function ProjectDetails() {
           )}
         </div>
 
-        <div className="mt-6 flex justify-end flex-wrap gap-20 border-t border-slate-700 pt-5">
-          <ProjectInfo
-            icon={UserRound}
-            label="Client"
-            value={project?.client.name ?? ""}
-          />
+        {user && user.role !== "DEVELOPER" ? (
+          <div className="mt-6 flex justify-end flex-wrap gap-20 border-t border-slate-700 pt-5">
+            <ProjectInfo
+              icon={UserRound}
+              label="Client"
+              value={project?.client.name ?? ""}
+            />
 
-          <ProjectInfo
-            icon={UserRound}
-            label="Created By"
-            value={project?.createdBy.name ?? ""}
-          />
+            <ProjectInfo
+              icon={UserRound}
+              label="Created By"
+              value={project?.createdBy.name ?? ""}
+            />
 
-          <ProjectInfo
-            icon={CalendarDays}
-            label="Created"
-            value={new Date(project?.createdAt!).toDateString()}
-          />
-        </div>
+            <ProjectInfo
+              icon={CalendarDays}
+              label="Created"
+              value={new Date(project?.createdAt!).toDateString()}
+            />
+          </div>
+        ) : null}
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 lg:grid-cols-5">

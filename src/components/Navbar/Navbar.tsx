@@ -34,15 +34,13 @@ const Navbar = () => {
             active={location.pathname.startsWith("/dashboard")}
           />
 
-          {user?.role !== "DEVELOPER" ? (
-            <NavItem
-              label="Projects"
-              onClick={() => {
-                navigate("/projects");
-              }}
-              active={location.pathname.startsWith("/projects")}
-            />
-          ) : null}
+          <NavItem
+            label="Projects"
+            onClick={() => {
+              navigate("/projects");
+            }}
+            active={location.pathname.startsWith("/projects")}
+          />
 
           {user?.role === "ADMIN" ? (
             <NavItem
