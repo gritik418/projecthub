@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { selectUser } from "./features/auth/auth.slice";
 import Clients from "./pages/client/Clients";
 import UsersPage from "./pages/users/Users";
+import { SocketManager } from "./components/Socket/SocketManager";
 
 function App() {
   const user = useSelector(selectUser);
@@ -18,6 +19,7 @@ function App() {
   return (
     <Router>
       <AuthProvider>
+        <SocketManager />
         <Navbar />
         <Routes>
           <Route path="/login" element={<Login />} />

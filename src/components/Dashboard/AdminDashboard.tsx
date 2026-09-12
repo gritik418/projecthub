@@ -7,9 +7,13 @@ import { useGetTasksQuery } from "../../features/task/task.api";
 import { useEffect, useState } from "react";
 import type { Task } from "../../features/task/task.interface";
 import { useSearchParams } from "react-router-dom";
+import { selectActiveUsers } from "../../features/user/user.slice";
+import { useSelector } from "react-redux";
 
 const AdminDashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+
+  const activeUsers = useSelector(selectActiveUsers);
   const { data, isLoading } = useGetTasksQuery({
     status: searchParams.get("status") || undefined,
     priority: searchParams.get("priority") || undefined,
@@ -49,7 +53,11 @@ const AdminDashboard = () => {
         <StatItem icon={FolderKanban} label="Projects" value="12" />
         <StatItem icon={ListTodo} label="Tasks" value="86" />
         <StatItem icon={AlertCircle} label="Overdue" value="7" />
-        <StatItem icon={Users} label="Online" value="14" />
+        <StatItem
+          icon={Users}
+          label="Online"
+          value={activeUsers.length.toString()}
+        />
       </div>
 
       <div className="overflow-hidden rounded-xl border border-slate-800 bg-slate-800">
