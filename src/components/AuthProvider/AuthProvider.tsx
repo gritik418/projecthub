@@ -11,6 +11,7 @@ import {
 } from "../../features/auth/auth.api";
 import { type AppDispatch } from "../../store";
 import { Navigate, useLocation } from "react-router-dom";
+import { useGetNotificationsQuery } from "../../features/notification/notification.api";
 
 interface AuthProviderProps {
   children: React.ReactNode;
@@ -23,6 +24,9 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const dispatch = useDispatch<AppDispatch>();
   const accessToken = useSelector(selectAccessToken);
+  useGetNotificationsQuery(undefined, {
+    skip: !accessToken,
+  });
 
   const location = useLocation();
 

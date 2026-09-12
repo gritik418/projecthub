@@ -5,12 +5,17 @@ import { selectUser } from "../../features/auth/auth.slice";
 import Logo from "../Logo/Logo";
 import NavItem from "./NavItem";
 import ProfileMenu from "./ProfileMenu";
+import NotificationDropdown from "../Notification/NotificationDropdown";
+import { useState } from "react";
+import { selectNotifications } from "../../features/notification/notification.slice";
 
 const AUTH_ROUTES = ["/login", "/register"];
 
 const Navbar = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const notifications = useSelector(selectNotifications);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const isAuthRoute = AUTH_ROUTES.some((route) =>
     location.pathname.startsWith(route),
@@ -64,14 +69,22 @@ const Navbar = () => {
         </nav>
 
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            className="relative flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-white/4 hover:text-slate-300"
-          >
-            <Bell size={18} />
+          <div className="relative">
+            <button
+              onClick={() => {
+                setIsOpen(true);
+              }}
+              className="relative flex h-10 w-10 items-center justify-center rounded-xl text-slate-500 transition hover:bg-white/4 hover:text-slate-300"
+            >
+              <Bell size={18} />
 
-            <span className="absolute right-2.5 top-2.5 h-1.5 w-1.5 rounded-full bg-indigo-500 ring-2 ring-[#070B16]" />
-          </button>
+              <span className="absolute right-1 text-white text-[10px] text-center flex items-center justify-center top-0 h-4 w-4 rounded-full bg-indigo-500">
+                {notifications.length > 9 ? "9+" : notifications.length}
+              </span>
+            </button>
+
+            <NotificationDropdown isOpen={isOpen} setIsOpen={setIsOpen} />
+          </div>
 
           <div className="mx-2 hidden h-6 w-px bg-white/5 sm:block" />
 

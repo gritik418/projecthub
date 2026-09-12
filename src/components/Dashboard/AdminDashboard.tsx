@@ -15,7 +15,7 @@ import { useSearchParams } from "react-router-dom";
 import { useGetDashboardAnalyticsQuery } from "../../features/dashboard/dashboard.api";
 import type { AdminDashboardResponseDto } from "../../features/dashboard/dashboard.interface";
 import { useGetTasksQuery } from "../../features/task/task.api";
-import type { Task } from "../../features/task/task.interface";
+import { selectTasks } from "../../features/task/task.slice";
 import { selectActiveUsers } from "../../features/user/user.slice";
 import StatItem from "./StatItem";
 import TaskFilters from "./TaskFilters";
@@ -30,19 +30,13 @@ const AdminDashboard = () => {
   const [analytics, setAnalytics] = useState<AdminDashboardResponseDto>();
 
   const activeUsers = useSelector(selectActiveUsers);
-  const { data, isLoading } = useGetTasksQuery({
+  const { isLoading } = useGetTasksQuery({
     status: searchParams.get("status") || undefined,
     priority: searchParams.get("priority") || undefined,
     dueFrom: searchParams.get("dueFrom") || undefined,
     dueTo: searchParams.get("dueTo") || undefined,
   });
-  const [tasks, setTasks] = useState<Task[]>([]);
-
-  useEffect(() => {
-    if (data?.data?.tasks) {
-      setTasks(data.data.tasks);
-    }
-  }, [data]);
+  const tasks = useSelector(selectTasks);
 
   useEffect(() => {
     if (analyticsData?.data) {
@@ -57,6 +51,8 @@ const AdminDashboard = () => {
       </div>
     );
   }
+
+  console.log(tasks);
 
   return (
     <div className="space-y-6 px-8 min-h-screen py-10">

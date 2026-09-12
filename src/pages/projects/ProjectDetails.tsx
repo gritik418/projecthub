@@ -9,8 +9,12 @@ import {
 import { Link, useParams } from "react-router-dom";
 
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import ActivityFeed from "../../components/ActivityLog/ActivityFeed";
 import TaskTable from "../../components/Dashboard/TaskTable";
+import { socket } from "../../components/Socket/SocketManager";
 import CreateTaskModal from "../../components/Tasks/CreateTaskModal";
+import { selectUser } from "../../features/auth/auth.slice";
 import {
   useGetProjectActivityQuery,
   useGetProjectDetailsQuery,
@@ -19,11 +23,7 @@ import type {
   ActivityLog,
   ProjectDetails,
 } from "../../features/project/project.interface";
-import { useSelector } from "react-redux";
-import { selectUser } from "../../features/auth/auth.slice";
-import { socket } from "../../components/Socket/SocketManager";
 import type { TaskStatus } from "../../schemas/task/create-task.schema";
-import ActivityFeed from "../../components/ActivityLog/ActivityFeed";
 
 type TasksCount = {
   todo: number;

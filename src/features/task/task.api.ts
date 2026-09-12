@@ -47,3 +47,5 @@ export const {
   useGetTasksQuery,
   useUpdateTaskStatusMutation,
 } = taskApi;
+
+export default taskApi;
