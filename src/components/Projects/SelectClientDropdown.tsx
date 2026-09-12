@@ -1,17 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { useGetClientsQuery } from "../../features/client/client.api";
 import type { Client } from "../../features/client/client.interface";
-import { Check, ChevronDown, Search, UserRound } from "lucide-react";
+import { Check, ChevronDown, Plus, Search, UserRound } from "lucide-react";
 import type { UseFormSetValue } from "react-hook-form";
 
 const SelectClientDropdown = ({
   setValue,
+  setShowCreateClientModal,
 }: {
   setValue: UseFormSetValue<{
     name: string;
     clientId: string;
     description?: string | undefined;
   }>;
+  setShowCreateClientModal: React.Dispatch<React.SetStateAction<boolean>>;
 }) => {
   const { data, isFetching } = useGetClientsQuery();
   const [clients, setClients] = useState<Client[]>();
@@ -109,7 +111,7 @@ const SelectClientDropdown = ({
               </div>
             </div>
 
-            <div className="max-h-60 overflow-y-auto p-1.5">
+            <div className="max-h-40 overflow-y-auto p-1.5">
               {isFetching ? (
                 <div className="text-white text-center py-8">Loading...</div>
               ) : (
@@ -180,6 +182,19 @@ const SelectClientDropdown = ({
                 </>
               )}
             </div>
+
+            <button
+              onClick={() => {
+                setShowCreateClientModal(true);
+              }}
+              className="flex w-full justify-center cursor-pointer items-center gap-3 rounded-lg border border-indigo-500/20 bg-indigo-500/10 px-3 py-2.5 text-left text-sm font-medium text-indigo-200 transition hover:border-indigo-500/40 hover:bg-indigo-500/20 active:scale-[0.99]"
+            >
+              <div className="flex items-center justify-center rounded-md text-white">
+                <Plus size={16} />
+              </div>
+
+              <span>Create new client</span>
+            </button>
           </div>
         )}
       </div>

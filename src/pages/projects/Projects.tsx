@@ -4,9 +4,12 @@ import CreateProjectModal from "../../components/Projects/CreateProjectModal";
 import ProjectCard from "../../components/Projects/ProjectCard";
 import { useGetProjectsQuery } from "../../features/project/project.api";
 import type { Project } from "../../features/project/project.interface";
+import CreateClientModal from "../../components/Clients/CreateClientModal";
 
 const Projects = () => {
-  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [createModalOpen, setCreateModalOpen] = useState<boolean>(false);
+  const [showCreateClientModal, setShowCreateClientModal] =
+    useState<boolean>(false);
   const { data, isLoading } = useGetProjectsQuery();
   const [projects, setProjects] = useState<Project[]>([]);
 
@@ -77,6 +80,14 @@ const Projects = () => {
       <CreateProjectModal
         open={createModalOpen}
         onClose={() => setCreateModalOpen(false)}
+        setShowCreateClientModal={setShowCreateClientModal}
+      />
+
+      <CreateClientModal
+        open={showCreateClientModal}
+        onClose={() => {
+          setShowCreateClientModal(false);
+        }}
       />
     </div>
   );

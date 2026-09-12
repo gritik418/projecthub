@@ -1,3 +1,5 @@
+import type { CreateClientDto } from "../../schemas/client/create-client.schema";
+
 export interface GetClientsResponse {
   success: boolean;
   message: string;
@@ -16,4 +18,10 @@ export interface Client {
   _count: {
     projects: number;
   };
+}
+
+export interface CreateClientResponse {
+  success: boolean;
+  message: string;
+  errors?: Partial<CreateClientDto>;
 }

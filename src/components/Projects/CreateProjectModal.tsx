@@ -12,9 +12,14 @@ import { selectUser } from "../../features/auth/auth.slice";
 interface CreateProjectModalProps {
   open: boolean;
   onClose: () => void;
+  setShowCreateClientModal: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-const CreateProjectModal = ({ open, onClose }: CreateProjectModalProps) => {
+const CreateProjectModal = ({
+  open,
+  onClose,
+  setShowCreateClientModal,
+}: CreateProjectModalProps) => {
   const user = useSelector(selectUser);
   const [createProject] = useCreateProjectMutation();
 
@@ -62,14 +67,14 @@ const CreateProjectModal = ({ open, onClose }: CreateProjectModalProps) => {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4 backdrop-blur-sm">
       <div className="w-full max-w-lg rounded-2xl border border-slate-700 bg-slate-800 shadow-2xl">
-        <div className="flex items-start justify-between border-b border-slate-700 px-6 py-5">
+        <div className="flex items-start justify-between border-b border-slate-700 px-6 py-3">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100/70 text-indigo-700">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-100/70 text-indigo-700">
               <FolderKanban size={20} />
             </div>
 
             <div>
-              <h2 className="text-xl font-semibold text-slate-100">
+              <h2 className="text-base font-semibold text-slate-100">
                 Create Project
               </h2>
 
@@ -90,7 +95,7 @@ const CreateProjectModal = ({ open, onClose }: CreateProjectModalProps) => {
 
         <form
           onSubmit={handleSubmit(handleCreateProject)}
-          className="space-y-5 px-6 py-6"
+          className="space-y-3 px-6 py-6"
         >
           <div>
             <label
@@ -144,7 +149,11 @@ const CreateProjectModal = ({ open, onClose }: CreateProjectModalProps) => {
             hidden
           />
 
-          <SelectClientDropdown setValue={setValue} />
+          <SelectClientDropdown
+            setShowCreateClientModal={setShowCreateClientModal}
+            setValue={setValue}
+          />
+
           {errors.clientId ? (
             <span className="text-xs text-red-500">
               {errors.clientId.message}

@@ -3,10 +3,13 @@ import ClientRow from "../../components/Clients/ClientRow";
 import { useGetClientsQuery } from "../../features/client/client.api";
 import { useEffect, useState } from "react";
 import type { Client } from "../../features/client/client.interface";
+import CreateClientModal from "../../components/Clients/CreateClientModal";
 
 const Clients = () => {
   const { data, isLoading } = useGetClientsQuery();
   const [clients, setClients] = useState<Client[]>([]);
+  const [showCreateClientModal, setShowCreateClientModal] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (data?.data?.clients) {
@@ -35,7 +38,12 @@ const Clients = () => {
           </p>
         </div>
 
-        <button className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700">
+        <button
+          onClick={() => {
+            setShowCreateClientModal(true);
+          }}
+          className="inline-flex cursor-pointer items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700"
+        >
           <Plus size={18} />
           Add Client
         </button>
@@ -94,6 +102,13 @@ const Clients = () => {
           </table>
         </div>
       </div>
+
+      <CreateClientModal
+        open={showCreateClientModal}
+        onClose={() => {
+          setShowCreateClientModal(false);
+        }}
+      />
     </div>
   );
 };
