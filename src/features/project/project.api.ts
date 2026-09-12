@@ -2,6 +2,7 @@ import type { CreateProjectDto } from "../../schemas/project/create-project.sche
 import baseApi from "../../store/api/base-api";
 import type {
   CreateProjectResponse,
+  GetProjectActivityResponse,
   GetProjectDetailsResponse,
   GetProjectsResponse,
 } from "./project.interface";
@@ -30,6 +31,12 @@ const projectApi = baseApi.injectEndpoints({
       }),
       providesTags: ["Tasks"],
     }),
+    getProjectActivity: build.query<GetProjectActivityResponse, string>({
+      query: (projectId: string) => ({
+        url: `/project/${projectId}/activity`,
+        method: "GET",
+      }),
+    }),
   }),
 });
 
@@ -37,4 +44,5 @@ export const {
   useGetProjectsQuery,
   useCreateProjectMutation,
   useGetProjectDetailsQuery,
+  useGetProjectActivityQuery,
 } = projectApi;

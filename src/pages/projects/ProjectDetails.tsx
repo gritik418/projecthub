@@ -11,12 +11,19 @@ import { Link, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import TaskTable from "../../components/Dashboard/TaskTable";
 import CreateTaskModal from "../../components/Tasks/CreateTaskModal";
-import { useGetProjectDetailsQuery } from "../../features/project/project.api";
-import type { ProjectDetails } from "../../features/project/project.interface";
+import {
+  useGetProjectActivityQuery,
+  useGetProjectDetailsQuery,
+} from "../../features/project/project.api";
+import type {
+  ActivityLog,
+  ProjectDetails,
+} from "../../features/project/project.interface";
 import { useSelector } from "react-redux";
 import { selectUser } from "../../features/auth/auth.slice";
 import { socket } from "../../components/Socket/SocketManager";
 import type { TaskStatus } from "../../schemas/task/create-task.schema";
+import ActivityFeed from "../../components/ActivityLog/ActivityFeed";
 
 type TasksCount = {
   todo: number;
@@ -30,8 +37,11 @@ export default function ProjectDetails() {
   const canCreateTask = user && user.role !== "DEVELOPER";
   const { projectId } = useParams();
   const [project, setProject] = useState<ProjectDetails>();
+  const { data: activityData, isLoading: isActivityDataLoading } =
+    useGetProjectActivityQuery(projectId!);
   const [showCreateTaskModal, setShowCreateTaskModal] =
     useState<boolean>(false);
+  const [activityLogs, setActivityLogs] = useState<ActivityLog[]>([]);
 
   const [tasksCount, setTasksCount] = useState<TasksCount>({
     done: 0,
@@ -51,6 +61,14 @@ export default function ProjectDetails() {
       setProject(data.data.project);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (isActivityDataLoading) return;
+
+    if (activityData?.data?.activities) {
+      setActivityLogs(activityData.data.activities);
+    }
+  }, [activityData]);
 
   useEffect(() => {
     if (!projectId) return;
@@ -79,6 +97,7 @@ export default function ProjectDetails() {
       taskId: string;
       projectId: string;
       status: TaskStatus;
+      activity: ActivityLog;
     }) => {
       if (projectId !== data.projectId) return;
 
@@ -96,6 +115,16 @@ export default function ProjectDetails() {
               : task,
           ),
         };
+      });
+
+      setActivityLogs((logs) => {
+        const alreadyExists = logs.some((log) => log.id === data.activity.id);
+
+        if (alreadyExists) {
+          return logs;
+        }
+
+        return [data.activity, ...logs];
       });
     };
 
@@ -238,6 +267,8 @@ export default function ProjectDetails() {
 
         <TaskTable tasks={project?.tasks || []} />
       </div>
+
+      <ActivityFeed activities={activityLogs} />
 
       {showCreateTaskModal ? (
         <CreateTaskModal

@@ -1,3 +1,4 @@
+import type { TaskStatus } from "../../schemas/task/create-task.schema";
 import type { Task } from "../task/task.interface";
 
 export interface GetProjectsResponse {
@@ -60,4 +61,38 @@ export interface GetProjectDetailsResponse {
 
 export interface ProjectDetails extends Project {
   tasks: Task[];
+}
+
+export interface GetProjectActivityResponse {
+  success: boolean;
+  message: string;
+  data?: {
+    activities: ActivityLog[];
+  };
+}
+
+export interface ActivityLog {
+  id: string;
+  taskId: string;
+  userId: string;
+  type: string;
+  oldStatus: TaskStatus;
+  newStatus: TaskStatus;
+  createdAt: string;
+  user: {
+    id: string;
+    name: string;
+    email: string;
+    role: string;
+  };
+  task: {
+    id: string;
+    title: string;
+    assignedDeveloper: {
+      id: string;
+      name: string;
+      email: string;
+      role: string;
+    };
+  };
 }
