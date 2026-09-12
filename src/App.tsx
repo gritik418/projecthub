@@ -10,6 +10,7 @@ import ProjectDetails from "./pages/projects/ProjectDetails";
 import { useSelector } from "react-redux";
 import { selectUser } from "./features/auth/auth.slice";
 import Clients from "./pages/client/Clients";
+import UsersPage from "./pages/users/Users";
 
 function App() {
   const user = useSelector(selectUser);
@@ -25,6 +26,10 @@ function App() {
 
           {user && user.role == "ADMIN" ? (
             <Route path="/clients" element={<Clients />} />
+          ) : null}
+
+          {user && user.role == "ADMIN" ? (
+            <Route path="/users" element={<UsersPage />} />
           ) : null}
 
           {user && user.role !== "DEVELOPER" ? (

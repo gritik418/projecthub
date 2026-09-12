@@ -1,5 +1,5 @@
 import baseApi from "../../store/api/base-api";
-import type { GetDevelopersResponse } from "./user.interface";
+import type { GetDevelopersResponse, GetUsersResponse } from "./user.interface";
 
 const userApi = baseApi.injectEndpoints({
   endpoints: (build) => ({
@@ -9,7 +9,13 @@ const userApi = baseApi.injectEndpoints({
         method: "GET",
       }),
     }),
+    getUsers: build.query<GetUsersResponse, void>({
+      query: () => ({
+        url: "/user",
+        method: "GET",
+      }),
+    }),
   }),
 });
 
-export const { useGetDevelopersQuery } = userApi;
+export const { useGetDevelopersQuery, useGetUsersQuery } = userApi;

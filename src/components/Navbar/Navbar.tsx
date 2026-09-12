@@ -43,6 +43,26 @@ const Navbar = () => {
               active={location.pathname.startsWith("/projects")}
             />
           ) : null}
+
+          {user?.role === "ADMIN" ? (
+            <NavItem
+              label="Clients"
+              onClick={() => {
+                navigate("/clients");
+              }}
+              active={location.pathname.startsWith("/clients")}
+            />
+          ) : null}
+
+          {user?.role === "ADMIN" ? (
+            <NavItem
+              label="Users"
+              onClick={() => {
+                navigate("/users");
+              }}
+              active={location.pathname.startsWith("/users")}
+            />
+          ) : null}
         </nav>
 
         <div className="flex items-center gap-2">
